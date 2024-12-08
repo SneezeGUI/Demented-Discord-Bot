@@ -8,7 +8,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-client = commands.Bot(command_prefix = "!", case_insensitive=False)
+client = commands.Bot(command_prefix = "!", case_insensitive=True)
 client.remove_command("help")
 
 @client.event
@@ -25,7 +25,7 @@ async def on_ready():
 
 #COGS ====>
 
-modules = ['slash' , 'meme']
+modules = ['slash']
 try:
     for module in modules:
         client.load_extension('cogs.' + module)
