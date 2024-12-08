@@ -1,5 +1,3 @@
-# This example requires the 'members' and 'message_content' privileged intents to function.
-
 import discord
 from discord.ext import commands
 from data.keep_alive import keep_alive
