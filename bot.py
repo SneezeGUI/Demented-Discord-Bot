@@ -2,13 +2,9 @@ import discord
 from discord.ext import commands
 from data.keep_alive import keep_alive
 
-description = '''Practice Bot'''
+description = '''Demented Bot'''
 
-intents = discord.Intents.default()
-intents.members = True
-intents.message_content = True
-
-client = commands.Bot(command_prefix = "!", case_insensitive=True)
+client = commands.Bot(command_prefix = "!", case_insensitive=True, intents=discord.Intents.all())
 client.remove_command("help")
 
 @client.event
