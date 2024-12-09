@@ -21,7 +21,7 @@ async def on_ready():
 
 #COGS ====>
 
-modules = ['slash']
+modules = ['slash', 'meme', 'events', 'info', 'fun',]
 try:
     for module in modules:
         client.load_extension('cogs.' + module)
