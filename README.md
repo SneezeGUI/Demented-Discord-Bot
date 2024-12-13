@@ -1,4 +1,4 @@
-A Discord bot I wrote for fun and proactice
+A Discord bot I wrote for fun and practice
 
 key-features:
 - slash commands
