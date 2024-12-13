@@ -1,7 +1,6 @@
-from discord.ext import commands
-import random
+from discord.ext import commands, tasks
+import discord
 import re
-import requests
 import json
 from data import all_lists
 import asyncio
@@ -13,6 +12,7 @@ from prompts import insults
 from discord import FFmpegPCMAudio
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+from bot import LISTENING_TO
 
 RNG_THRESHOLD = 3
 
@@ -49,7 +49,10 @@ class EventsCog(commands.Cog):
 
       # wait for bot to finish typing
       await asyncio.sleep(5)
-
+      # change listening to
+      print('Status Updated')
+      await self.bot.change_presence(
+          activity=discord.Activity(type=discord.ActivityType.listening, name=random.choice(LISTENING_TO)))
       if use_api:
           insult = "{} " + requests.get('https://evilinsult.com/generate_insult.php?lang=en&type=plaintext').text
       else:
@@ -63,7 +66,10 @@ class EventsCog(commands.Cog):
 
       # wait for bot to finish typing
       await asyncio.sleep(5)
-
+      # change listening to
+      print('Status Updated')
+      await self.bot.change_presence(
+          activity=discord.Activity(type=discord.ActivityType.listening, name=random.choice(LISTENING_TO)))
       compliment = "{} " + random.choice(compliments)
       await ctx.reply(compliment.format(f'{ctx.author.mention}'))
 
@@ -76,10 +82,14 @@ class EventsCog(commands.Cog):
       # if message.content.startswith("!"):
 
       if message.author == self.bot.user or message.author == 1314688956989964388:
+
           return
 
       rng = random.randrange(0, 100, 1)
       print(rng)
+      print('Analyzing...')
+      # await self.bot.change_presence(
+      #     activity= discord.Activity(type= discord.ActivityType.listening, name=random.choice(LISTENING_TO)))
       await asyncio.sleep(1)
 
       rng_threshold = RNG_THRESHOLD
