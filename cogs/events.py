@@ -67,11 +67,12 @@ class EventsCog(commands.Cog):
       # wait for bot to finish typing
       await asyncio.sleep(5)
       # change listening to
+
+      compliment = "{} " + random.choice(compliments)
+      await ctx.reply(compliment.format(f'{ctx.author.mention}'))
       print('Status Updated')
       await self.bot.change_presence(
           activity=discord.Activity(type=discord.ActivityType.listening, name=random.choice(LISTENING_TO)))
-      compliment = "{} " + random.choice(compliments)
-      await ctx.reply(compliment.format(f'{ctx.author.mention}'))
 
   async def analyze(self, user_input):
       sia = SentimentIntensityAnalyzer()

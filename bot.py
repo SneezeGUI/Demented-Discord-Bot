@@ -43,8 +43,8 @@ try:
         print(f'Loaded: {module}.')
 except Exception as e:
     print(f'Error loading {module}: {e}')
-
-print('Bot.....Activated')
+else:
+    print('Bot.....Activated')
 
 @bot.event
 async def on_command_error(ctx, error):
