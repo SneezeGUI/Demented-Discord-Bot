@@ -1,20 +1,14 @@
 import discord
 from discord.ext import commands
 import asyncio
-
+from datetime import datetime
+from typing import Optional
+from discord import Embed, Member
 
 class SlashCog(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
-    ##FIRST SLASH
-    @bot.slash_command(
-      name='first-slash',
-      description='default command to get active dev',
-
-    )
-    async def first_slash(ctx):
-      await ctx.respond("You executed a slash command!")
 #CLEAR
     @bot.slash_command(
       name='clear',
@@ -85,6 +79,7 @@ class SlashCog(commands.Cog):
 
 #UNBAN
     @bot.slash_command(
+      name = 'unban',
       aliases = 'unban',
       description = "Unbans a member from the server",
       # brief = "Unban a member")
@@ -103,32 +98,33 @@ class SlashCog(commands.Cog):
         return
       await ctx.send(member = "was not found.")
 
+
 ### todo : fix commands below and add more
 
-# #MUTE
-#     @bot.slash_command(
-#       name = 'mute',
-#       description = "Mutes the member lol",
-#       # brief="Mute a member")
-#     )
-#     @commands.has_permissions(kick_members=True)
-#     async def mute(ctx, member: discord.Member = None):
-#       muted_role = ctx.guild.get_role(827640819980566548)
-#
-#       await member.add_roles(muted_role)
-#       await ctx.respond(member.mention + "has been muted")
-# #UNMUTE
-#     @bot.slash_command(
-#       aliases = 'unmute',
-#       description = "Unmute the member.",
-#       # brief = "Unmute a member")
-#     )
-#     @commands.has_permissions(kick_members=True)
-#     async def unmute(self, ctx, member: discord.Member = None, *, command=None):
-#       unmuted_role = ctx.guild.get_role(827640819980566548)
-#
-#       await member.remove_roles(unmuted_role)
-#       await ctx.respond(member.mention + "has been unmuted")
+#MUTE
+    @bot.slash_command(
+      name = 'mute',
+      description = "Mutes the member lol",
+      # brief="Mute a member")
+    )
+    @commands.has_permissions(kick_members=True)
+    async def mute(ctx, member: discord.Member):
+      muted_role = ctx.guild.get_role(1315394620259176510)
+
+      await member.add_roles(muted_role)
+      await ctx.respond(member.mention + "has been muted")
+#UNMUTE
+    @bot.slash_command(
+      aliases = 'unmute',
+      description = "Unmute the member.",
+      # brief = "Unmute a member")
+    )
+    @commands.has_permissions(kick_members=True)
+    async def unmute(ctx, member: discord.Member):
+      unmuted_role = ctx.guild.get_role(1315394620259176510)
+
+      await member.remove_roles(unmuted_role)
+      await ctx.respond(member.mention + "has been unmuted")
 
 def setup(bot):
   bot.add_cog(SlashCog(bot))

@@ -1,15 +1,14 @@
 from datetime import datetime
 from typing import Optional
-
+from discord.ext import commands
 from discord import Embed, Member
-from discord.ext.commands import Cog
-from discord.ext.commands import command
+#
 
-class InfoCog(Cog):
+class InfoCog(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 
-	@command(name="info", aliases=["memberinfo", "ui", "mi",'userinfo'])
+	@commands.command(name="info", aliases=["memberinfo", "ui", "mi",'userinfo'])
 	async def user_info(self, ctx, target: Optional[Member]):
 		target = target or ctx.author
 
