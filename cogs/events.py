@@ -41,7 +41,6 @@ class EventsCog(commands.Cog):
       except Exception as e:
           print(f"Error joining or playing sound: {e}")
 
-
   async def send_insult(self, ctx, message, use_api=True):
       print('insulting ' + ctx.author.name)
       # set bot to typing
@@ -119,9 +118,6 @@ class EventsCog(commands.Cog):
           use_insult_api = rng >= rng_threshold / 2
           await self.send_insult(message, use_insult_api)
 
-
-
-
   # async def on_message(self, message):
   #   message.content.lower()
   #   if message.author.bot:
@@ -177,6 +173,7 @@ class EventsCog(commands.Cog):
   #     count = 1
   #   if substring in message.content.lower():
   #       await message.channel.send("Oya "*(count+2))
+
 def setup(bot):
     bot.add_cog(EventsCog(bot))
 

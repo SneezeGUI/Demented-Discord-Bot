@@ -5,7 +5,6 @@ from discord import Member, Embed
 from discord.ext import commands
 from discord.ext.commands import BucketType, BadArgument
 
-
 class Fun(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
@@ -13,7 +12,6 @@ class Fun(commands.Cog):
 	@commands.command(name="hello", aliases=["hi", "Hey"])
 	async def say_hello(self, ctx):
 		await ctx.send(f"{choice(('Hello', 'Hi', 'Hey', 'Hiya','Yo'))} {ctx.author.mention}!")
-
 
 	@commands.command(name="slap", aliases=["hit"], help = "Ever felt the need to a the person through the phone?")
 	async def slap_member(self, ctx, member: Member, *, reason: Optional[str] = "for no reason lol"):
@@ -62,8 +60,6 @@ class Fun(commands.Cog):
 	#
 	# 	else:
 	# 		await ctx.send("No facts are available for that animal.")
-
-
 
 def setup(bot):
 	bot.add_cog(Fun(bot))

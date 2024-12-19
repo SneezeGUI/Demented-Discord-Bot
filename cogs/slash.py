@@ -95,9 +95,6 @@ class SlashCog(commands.Cog):
         return
       await ctx.send(member = "was not found.")
 
-
-### todo : fix commands below and add more
-
 #MUTE
     @bot.slash_command(
       name = 'mute',

@@ -9,8 +9,6 @@ class Meme(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
-
     @commands.command(pass_context=True)
     async def dank(self,ctx):
         # '''
@@ -27,7 +25,6 @@ class Meme(commands.Cog):
       
                 await ctx.send(embed=embed)
 
-
     @commands.command(pass_context=True)
     async def meme(self,ctx):
         # '''
@@ -43,7 +40,6 @@ class Meme(commands.Cog):
                   await asyncio.sleep(2)
                 await ctx.send(embed=embed)
 
-
     @commands.command(pass_context=True)
     async def reddit(self,ctx, *, subreddit):
  
@@ -56,8 +52,6 @@ class Meme(commands.Cog):
                 async with ctx.channel.typing():
                   await asyncio.sleep(2)
                 await ctx.send(embed=embed)
-
-
 
 def setup(bot):
     bot.add_cog(Meme(bot))

@@ -1,15 +1,13 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from data.keep_alive import keep_alive
 import random
-
 
 description = '''Demented Bot'''
 LISTENING_TO = ['Sneeze','the Voices','my Dad','your moms queefs','Davids Screams','children crying']
 
 bot = commands.Bot(command_prefix = "!", case_insensitive=True, intents=discord.Intents.all())
 bot.remove_command("help")
-
 
 @bot.event
 async def on_member_join(ctx,member):
@@ -23,18 +21,12 @@ async def on_ready():
   print("Bot is online!")
   await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=random.choice(LISTENING_TO)))
 
-
-
-
 @bot.event
 async def on_guild_join(guild):
     for channel in guild.text_channels:
         if channel.permissions_for(guild.me).send_messages:
             await channel.send('Well here I am!')
         break
-
-
-
 
 modules = ['slash', 'meme', 'fun', 'info', 'events',]
 try:

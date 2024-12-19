@@ -10,7 +10,6 @@ from discord.ext import commands
 with open('data/config.json') as f:
   CONFIG = json.load(f)
 
-
 CLIENT_SESSION = aiohttp.ClientSession()
 COLOR_RED = 0xEF2928
 COLOR_BLUE = 0x0094E6
@@ -28,7 +27,6 @@ database = {
   "tot": parse_list_file('data/tot.txt')
 }
 
-
 class GamesCog(commands.Cog):
     def __init__(self, bot):
       self.bot = bot
@@ -41,7 +39,6 @@ class GamesCog(commands.Cog):
       response = f"**Truth:** {choice(database['truths'])}"
       await ctx.send(response)
 
-
     @commands.command(aliases = ['d'], help = "Gives a prompt for the game of dares!", brief = "Game of Daress!")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def dare(self,ctx):
@@ -50,7 +47,6 @@ class GamesCog(commands.Cog):
       response = f"**Dare:** {choice(database['dares'])}"
       await ctx.send(response)
 
-
     @commands.command(aliases = ['neverhaveiever', 'nhie', 'ever', 'n'], help = "Gives questions for the age old game of never have I ever! ", brief = "Never Have I ever -")
     @commands.cooldown(1, 2.5, commands.BucketType.user)
     async def never(self,ctx):
@@ -58,7 +54,6 @@ class GamesCog(commands.Cog):
 
       response = f"**Never have I ever** {choice(database['nhie'])}"
       await ctx.send(response)
-
 
     @commands.command(aliases = ['tot', 'tt'], help = "Gives you two options to choose from", brief = "This Or That game.")
     @commands.cooldown(1, 2.5, commands.BucketType.user)
@@ -86,8 +81,6 @@ class GamesCog(commands.Cog):
       sent_embed = await ctx.send(embed = embed)
       await sent_embed.add_reaction("🔴")
       await sent_embed.add_reaction("🔵")
-
-
 
     @commands.command(aliases = ['wyr', 'rather'], help = "Gets you a would you rather question!", brief = "Would you rather?")
     @commands.cooldown(1, 3, commands.BucketType.user)
@@ -119,8 +112,6 @@ class GamesCog(commands.Cog):
       sent_embed = await ctx.send(embed = embed)
       await sent_embed.add_reaction("🔴")
       await sent_embed.add_reaction("🔵")
-
-
 
     @commands.command(name='wyp', aliases = ['wyp', 'willyoupressthebutton'], help = "If you are given two absurd choices, which one would you choose?", brief = "Will you press the button?")
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -156,9 +147,6 @@ class GamesCog(commands.Cog):
       sent_embed = await ctx.send(embed = embed)
       await sent_embed.add_reaction("🔴")
       await sent_embed.add_reaction("🔵")
-
-
-
 
 def setup(bot):
   bot.add_cog(GamesCog(bot))
