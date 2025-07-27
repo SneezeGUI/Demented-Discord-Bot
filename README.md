@@ -111,13 +111,6 @@ You can configure the bot by editing the `data/config.json` file, which contains
 ### Voice
 - Mention the bot with "join" to play random sound effects in your voice channel
 
-## Developer Documentation
-
-For developers working on the bot:
-
-- [DEV_GUIDE.md](DEV_GUIDE.md) - Comprehensive developer documentation
-- [QUICK_START.md](QUICK_START.md) - Quick reference for common tasks
-
 ## Credits
 
 - NLTK chat events - Credit to [YungSchmeg](https://github.com/JCoombs224/discord-chat-bot-nltk)
