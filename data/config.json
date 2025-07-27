@@ -1,10 +1,48 @@
 {
 	"BOT_PREFIX": "!",
+	"DEFAULT_COLOR": "0x7289DA",
+	"ERROR_COLOR": "0xFF0000",
+	"SUCCESS_COLOR": "0x00FF00",
+	"WARNING_COLOR": "0xFFAA00",
+
+	"LISTENING_STATUSES": [
+		"Sneeze", 
+		"the Voices", 
+		"my Dad", 
+		"your moms queefs", 
+		"Davids Screams", 
+		"children crying"
+	],
 
 	"PLAYING_STATUSES": [
 		"Truth or Dare",
 		"Would You Rather",
 		"Never Have I Ever"
-	]
+	],
 
+	"FEATURES": {
+		"RANDOM_RESPONSES": true,
+		"AUTO_MODERATION": false, 
+		"VOICE_EFFECTS": true,
+		"SLASH_COMMANDS": true,
+		"TEMP_BANS": true
+	},
+
+	"RNG_THRESHOLD": 20,
+	"API_TIMEOUTS": {
+		"DEFAULT": 10,
+		"JOKE_API": 10
+	},
+
+	"AI_SETTINGS": {
+		"ENABLED": true,
+		"API_ENDPOINT": "https://generativelanguage.googleapis.com/v1beta/models",
+		"DEFAULT_MODEL": "gemini-2.5-flash-lite",
+		"MAX_HISTORY_LENGTH": 8
+	},
+
+    "AUTONOMY_SETTINGS": {
+        "ENABLED": true,
+        "BOREDOM_THRESHOLD": 15.0
+    }
 }
