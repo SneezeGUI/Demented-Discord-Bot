@@ -100,8 +100,8 @@ def create_embed(
 
 
 def get_random_sound_file():
-    """Get a random sound file from the bot_sounds directory."""
-    sounds_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bot_sounds')
+    """Get a random sound file from the data/bot_sounds directory."""
+    sounds_dir = os.path.join(os.path.dirname(__file__), 'bot_sounds')
     if not os.path.exists(sounds_dir):
         logger.error(f"Sound directory not found: {sounds_dir}")
         return None

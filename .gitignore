@@ -1,11 +1,46 @@
-
-/data/__pycache__
-/cogs/__pycache__
-/data/__pycache__
-/cogs/__pycache__
-/data/__pycache__
+# Environment variables
 .env
-/.idea
-/.idea
-/.idea
-/__pycache__
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Log files
+*.log
+logs/
+
+# Database file
+data/bot_memory.db
+
+# Generated cache files
+data/tts_cache/
+data/generated_images/
+
+# IDE-specific files
+.idea/
+.vscode/
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Testing & Linting
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+
+# Configuration - track the example file, not the local one
+data/config.json
+
+# OS-specific files
+.DS_Store
+Thumbs.db

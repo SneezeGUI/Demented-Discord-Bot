@@ -2,37 +2,30 @@
 
 from random import choice, randint, shuffle
 from typing import Optional
-from discord import Member, app_commands
 import discord
+from discord import app_commands
 from discord.ext import commands
-from discord.ext.commands import BucketType, BadArgument
 
 
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="hello", aliases=["hi", "Hey"])
-    async def say_hello(self, ctx: commands.Context):
+    @app_commands.command(name="hello", description="A friendly greeting!")
+    async def hello(self, interaction: discord.Interaction):
         """A simple hello command."""
-        await ctx.send(f"{choice(('Hello', 'Hi', 'Hey', 'Hiya', 'Yo'))} {ctx.author.mention}!")
+        await interaction.response.send_message(f"{choice(('Hello', 'Hi', 'Hey', 'Hiya', 'Yo'))} {interaction.user.mention}!")
 
-    @commands.command(name="slap", aliases=["hit"], help="Ever felt the need to slap a person through the phone?")
-    async def slap_member(self, ctx: commands.Context, member: Member, *, reason: Optional[str] = "for no reason lol"):
+    @app_commands.command(name="slap", description="Slap a user, with an optional reason.")
+    async def slap(self, interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = "for no reason"):
         """Slaps a member."""
-        await ctx.send(f"{ctx.author.display_name} slapped {member.mention} {reason}!")
+        await interaction.response.send_message(f"{interaction.user.display_name} slapped {member.mention} {reason}!")
 
-    @slap_member.error
-    async def slap_member_error(self, ctx: commands.Context, exc):
-        if isinstance(exc, BadArgument):
-            await ctx.send("I can't find that member.")
-
-    @commands.command(name="echo", aliases=["say"], help="Says what the user wants it to say!")
-    @commands.cooldown(1, 15, BucketType.guild)
-    async def echo_message(self, ctx: commands.Context, *, message: str):
+    @app_commands.command(name="echo", description="Repeats a message.")
+    @app_commands.checks.cooldown(1, 15, key=lambda i: i.guild_id)
+    async def echo(self, interaction: discord.Interaction, message: str):
         """Repeats a user's message."""
-        await ctx.message.delete()
-        await ctx.send(message)
+        await interaction.response.send_message(message)
 
     @app_commands.command(name="call-gay", description="Calls a user gay... for fun, of course.")
     async def call_gay(self, interaction: discord.Interaction, member: discord.Member):
@@ -59,10 +52,6 @@ class Fun(commands.Cog):
     @app_commands.command(name="hug", description="Give a hug to another user.")
     async def hug(self, interaction: discord.Interaction, member: discord.Member):
         await interaction.response.send_message(f"{interaction.user.mention} gives a warm hug to {member.mention}! 🤗")
-
-    @app_commands.command(name="slap-slash", description="Slap a user in a playful manner.")
-    async def slap_slash(self, interaction: discord.Interaction, member: discord.Member):
-        await interaction.response.send_message(f"{interaction.user.mention} just slapped {member.mention}! Ouch! 🖐️")
 
     @app_commands.command(name="reverse", description="Reverses the given text.")
     async def reverse_text(self, interaction: discord.Interaction, text: str):

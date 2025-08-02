@@ -12,7 +12,7 @@ from typing import List, Dict, Any, Union, Optional
 
 from data.utils import get_config_value
 from data.session_manager import cached_http_get
-from prompts import SYSTEM_PROMPT, CREATOR_CONTEXT_PROMPT, BOT_MOOD_PROMPT, USER_SENTIMENT_PROMPT
+from utils.prompts import SYSTEM_PROMPT, CREATOR_CONTEXT_PROMPT, BOT_MOOD_PROMPT, USER_SENTIMENT_PROMPT
 from data.database_manager import (
     add_user_fact, get_user_facts, get_user_sentiment, update_user_sentiment,
     get_all_guilds_with_autonomy, get_server_config_value

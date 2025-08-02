@@ -28,7 +28,7 @@
 		"TEMP_BANS": true
 	},
 
-	"RNG_THRESHOLD": 20,
+	"RNG_THRESHOLD": 5,
 	"API_TIMEOUTS": {
 		"DEFAULT": 10,
 		"JOKE_API": 10
@@ -37,12 +37,12 @@
 	"AI_SETTINGS": {
 		"ENABLED": true,
 		"API_ENDPOINT": "https://generativelanguage.googleapis.com/v1beta/models",
-		"DEFAULT_MODEL": "gemini-2.5-flash-lite",
+		"DEFAULT_MODEL": "gemini-2.5-flash",
 		"MAX_HISTORY_LENGTH": 8
 	},
 
     "AUTONOMY_SETTINGS": {
         "ENABLED": true,
-        "BOREDOM_THRESHOLD": 15.0
+        "BOREDOM_THRESHOLD": 60.0
     }
 }

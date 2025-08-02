@@ -11,8 +11,7 @@ import asyncio
 import platform
 import time
 import random
-import traceback
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, Any, Optional
 
 # --- MODIFICATION: Load environment variables FIRST ---
 from dotenv import load_dotenv
@@ -25,7 +24,7 @@ from discord.ext import commands, tasks
 
 # Now, it's safe to import local modules that depend on .env variables
 from data.web_server import keep_alive
-from data.session_manager import SessionManager, SimpleCache
+from data.session_manager import SessionManager
 from data.utils import load_config, create_embed
 from data.database_manager import setup_database
 
@@ -55,7 +54,6 @@ if not bot_token:
 # Load config once at startup
 config = load_config()
 BOT_PREFIX = config.get('BOT_PREFIX', '!')
-LISTENING_TO = config.get('LISTENING_STATUSES', ['Discord'])
 
 # Initialize bot with comprehensive intents
 intents = discord.Intents.default()
@@ -124,16 +122,32 @@ class DementedBot(commands.Bot):
         print("=" * 50 + "\n")
 
 
+def get_random_activity(cfg: Dict[str, Any]) -> Optional[discord.Activity]:
+    """Selects a random activity from the config file."""
+    listening_statuses = cfg.get('LISTENING_STATUSES', [])
+    playing_statuses = cfg.get('PLAYING_STATUSES', [])
+
+    activities = []
+    if listening_statuses:
+        activities.extend([(discord.ActivityType.listening, name) for name in listening_statuses])
+    if playing_statuses:
+        activities.extend([(discord.ActivityType.playing, name) for name in playing_statuses])
+
+    if not activities:
+        logger.warning("No statuses found in config file. Bot will have no activity.")
+        return None
+
+    activity_type, activity_name = random.choice(activities)
+    return discord.Activity(type=activity_type, name=activity_name)
+
+
 # Instantiate our custom bot
 bot = DementedBot(
     command_prefix=commands.when_mentioned_or(BOT_PREFIX),
     intents=intents,
     help_command=None,
     case_insensitive=True,
-    activity=discord.Activity(
-        type=discord.ActivityType.listening,
-        name=random.choice(LISTENING_TO)
-    )
+    activity=get_random_activity(config)
 )
 
 

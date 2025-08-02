@@ -81,7 +81,7 @@ class EventsCog(commands.Cog, name="Events"):
         self.ffmpeg_executable_path = get_ffmpeg_executable(self.bot)
 
         self.tts_cache_path = Path(__file__).parent.parent / "data" / "tts_cache"
-        self.sounds_path = Path(__file__).parent.parent / "bot_sounds"
+        self.sounds_path = Path(__file__).parent.parent / "data" / "bot_sounds"
         self.tts_cache_path.mkdir(exist_ok=True)
         self.sounds_path.mkdir(exist_ok=True)
         if not gtts_available:
