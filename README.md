@@ -146,4 +146,4 @@ Please feel free to fork the repo and submit a pull request.
 
 ### Credits
 
-* **NLTK chat events inspiration:** [YungSchmeg's discord-chat-bot-nltk](https://github.com/YungSchmeg/discord-chat-bot-nltk)
+* **NLTK chat events inspiration:** [YungSchmeg's discord-chat-bot-nltk](https://github.com/JCoombs224/Chat-Bot-NLTK)
