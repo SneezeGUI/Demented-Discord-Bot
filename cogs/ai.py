@@ -1,5 +1,4 @@
 # C:/Development/Projects/Demented-Discord-Bot/cogs/ai.py
-
 import os
 import logging
 import random
@@ -12,7 +11,8 @@ from typing import List, Dict, Any, Union, Optional
 
 from data.utils import get_config_value
 from data.session_manager import cached_http_get
-from utils.prompts import SYSTEM_PROMPT, CREATOR_CONTEXT_PROMPT, BOT_MOOD_PROMPT, USER_SENTIMENT_PROMPT
+# --- MODIFICATION: Update prompt imports ---
+from utils.prompts import SYSTEM_PROMPT, CREATOR_CONTEXT_PROMPT, BOT_MOOD_PROMPT
 from data.database_manager import (
     add_user_fact, get_user_facts, get_user_sentiment, update_user_sentiment,
     get_all_guilds_with_autonomy, get_server_config_value
@@ -47,7 +47,6 @@ class AICog(commands.Cog, name="AI"):
         self.conversation_manager = ConversationManager()
         self.boredom = 0.0
         self.autonomy_enabled = get_config_value(bot, "AUTONOMY_SETTINGS.ENABLED", False)
-        # --- MODIFICATION: Add state tracking for anti-spam ---
         self.last_autonomously_tagged_user: Dict[int, int] = {}
 
         if not self.api_key:
@@ -71,17 +70,8 @@ class AICog(commands.Cog, name="AI"):
             return "Slightly bored"
         return "Content and Attentive"
 
-    def _get_sentiment_description(self, score: float) -> str:
-        """Translates a user's sentiment score into a description for the AI."""
-        if score > 5:
-            return "This is one of my favorite users. Be extra witty and charming."
-        if score > 2:
-            return "I like this user. Be friendly."
-        if score < -5:
-            return "I strongly dislike this user. Be dismissive and condescending."
-        if score < -2:
-            return "I dislike this user. Be sarcastic and curt."
-        return "Neutral. Standard interaction."
+    # --- MODIFICATION: This function is no longer needed as sentiment is handled by the AI ---
+    # def _get_sentiment_description(self, score: float) -> str: ... (REMOVED)
 
     def _format_history_for_gemini(self, history: list) -> list:
         gemini_contents = []
@@ -113,8 +103,6 @@ class AICog(commands.Cog, name="AI"):
         generation_config = {"temperature": 0.9, "topK": 1, "topP": 1, "maxOutputTokens": 2048, "stopSequences": []}
         if structured_response:
             generation_config["responseMimeType"] = "application/json"
-            # The specific prompt for the structured response is now added in the calling function
-            # to allow for different kinds of structured requests.
 
         payload = {"contents": contents, "systemInstruction": {"parts": {"text": final_system_prompt}},
                    "generationConfig": generation_config}
@@ -129,8 +117,7 @@ class AICog(commands.Cog, name="AI"):
                         return json.loads(raw_text)
                     except json.JSONDecodeError:
                         logger.error(f"AI failed to return valid JSON. Raw response: {raw_text}")
-                        # Provide a default structure on failure
-                        return {"response_text": raw_text, "users_to_tag": [], "found_fact": False, "fact_text": None}
+                        return {"response_text": raw_text, "users_to_tag": [], "sentiment_change": 0}
                 else:
                     return raw_text
             except (KeyError, IndexError) as e:
@@ -139,10 +126,10 @@ class AICog(commands.Cog, name="AI"):
         logger.warning(f"Failed to get a valid response from the Gemini API. Response: {response_data}")
         fallback_response = "I'm sorry, I had a brain fart and couldn't think of a response. Try again?"
         if structured_response:
-            return {"response_text": fallback_response, "users_to_tag": [], "found_fact": False, "fact_text": None}
+            return {"response_text": fallback_response, "users_to_tag": [], "sentiment_change": 0}
         return fallback_response
 
-    # ... (voice greeting methods remain unchanged) ...
+    # ... (voice greeting methods remain unchanged and are preserved) ...
     async def get_voice_greeting(self, user_name: str) -> str:
         """Generates a short, witty greeting for joining a voice channel."""
         prompt = (
@@ -176,13 +163,11 @@ class AICog(commands.Cog, name="AI"):
         contents = [{"role": "user", "parts": [{"text": prompt}]}]
         return await self._get_gemini_response(contents) or f"Ugh, fine. I'm here, {user_name}."
 
-    async def get_conversational_response(self, message: discord.Message, mentioned_users: List[discord.Member],
-                                          sentiment_change: float = 0.0) -> Dict[str, Any]:
+    async def get_conversational_response(self, message: discord.Message, mentioned_users: List[discord.Member]) -> Dict[str, Any]:
         """Gets a contextual AI response, aware of mentioned users, and returns a structured object."""
         self.boredom = max(0, self.boredom - 2.0)
         user_id = message.author.id
         is_creator = user_id == self.bot.creator_id
-        update_user_sentiment(user_id, sentiment_change)
 
         channel_id, author_name, user_input = message.channel.id, message.author.display_name, message.clean_content.replace(
             f"@{self.bot.user.name}", "").strip()
@@ -195,9 +180,12 @@ class AICog(commands.Cog, name="AI"):
         if author_facts:
             memory_context += f"\n\n--- Things to remember about {author_name} (the speaker) ---\n- " + "\n- ".join(
                 author_facts)
-        memory_context += USER_SENTIMENT_PROMPT.format(user_name=author_name,
-                                                       sentiment_desc=self._get_sentiment_description(
-                                                           author_sentiment_score))
+        
+        # --- MODIFICATION: The old sentiment description is no longer needed here ---
+        # The AI will now determine sentiment on its own based on the main system prompt.
+        # We pass the current score so it knows the starting point.
+        memory_context += f"\n\n--- Current sentiment towards {author_name} (the speaker) --- \n- Score: {author_sentiment_score:.2f}"
+
 
         if mentioned_users:
             memory_context += "\n\n--- Other users were mentioned in this message ---"
@@ -206,7 +194,7 @@ class AICog(commands.Cog, name="AI"):
                 user_facts = get_user_facts(user.id, limit=3)
                 user_sentiment = get_user_sentiment(user.id)
                 memory_context += f"\n- User '{user.display_name}':"
-                memory_context += f"\n  - My sentiment towards them: {self._get_sentiment_description(user_sentiment)}"
+                memory_context += f"\n  - My current sentiment score towards them: {user_sentiment:.2f}"
                 if user_facts:
                     memory_context += "\n  - Known facts: " + ", ".join(user_facts)
             memory_context += "\nFeel free to use this information in your response and mention them by name if relevant."
@@ -215,13 +203,8 @@ class AICog(commands.Cog, name="AI"):
         history = self.conversation_manager.get_history(channel_id, max_history)
         gemini_contents = self._format_history_for_gemini(history)
 
-        # Add the specific instructions for the structured response
-        memory_context += (
-            "\n\nIMPORTANT: Your response MUST be a valid JSON object with two keys: "
-            "'response_text' (a string containing your conversational reply) and "
-            "'users_to_tag' (a list of strings, where each string is the exact display name of a user you talked about in your response). "
-            "Example: {\"response_text\": \"I heard David is great at that!\", \"users_to_tag\": [\"David\"]}"
-        )
+        # The main system prompt now contains instructions for the JSON format,
+        # including the new 'sentiment_change' key.
 
         ai_response_data = await self._get_gemini_response(
             gemini_contents,
@@ -233,9 +216,17 @@ class AICog(commands.Cog, name="AI"):
         if ai_response_data and ai_response_data.get("response_text"):
             self.conversation_manager.add_to_history(channel_id, "assistant", ai_response_data["response_text"],
                                                      max_history)
+            
+            # --- NEW: Process sentiment change from the AI's response ---
+            sentiment_change = ai_response_data.get("sentiment_change", 0)
+            if isinstance(sentiment_change, (int, float)):
+                update_user_sentiment(user_id, sentiment_change)
+                logger.info(f"Updated sentiment for user {user_id} by {sentiment_change}.")
+            # --- END NEW ---
 
         return ai_response_data
 
+    # ... (all other methods like assess_and_remember_fact, get_insulting_response, autonomy_loop, etc., are preserved) ...
     async def assess_and_remember_fact(self, message: discord.Message) -> Optional[str]:
         """
         Analyzes a user's message to see if it contains a new, noteworthy fact.
@@ -328,7 +319,6 @@ class AICog(commands.Cog, name="AI"):
             if not channel or not isinstance(channel, discord.TextChannel):
                 return
 
-            # --- MODIFICATION: Prevent back-to-back posts ---
             try:
                 last_message = await channel.fetch_message(channel.last_message_id) if channel.last_message_id else None
                 if last_message and last_message.author.id == self.bot.user.id:
@@ -338,7 +328,6 @@ class AICog(commands.Cog, name="AI"):
                 logger.warning(f"Could not fetch last message in #{channel.name}. Skipping to be safe.")
                 return
 
-            # --- MODIFICATION: Prevent consecutive user tags ---
             last_tagged_id = self.last_autonomously_tagged_user.get(channel.id)
             online_members = [
                 m for m in channel.members
@@ -349,10 +338,8 @@ class AICog(commands.Cog, name="AI"):
             if target_user:
                 prompt_text = f"You are feeling bored. Start a conversation with the user '{target_user.display_name}' to entertain yourself. Ask them an absurd or interesting question."
             else:
-                # --- SUGGESTION: Add logging for this case ---
                 if online_members:
                     logger.info(f"No valid, non-consecutive users to target in #{channel.name}. Posting a generic message.")
-                # --- END SUGGESTION ---
                 prompt_text = "You are feeling bored. Say something interesting or absurd to the channel to stir up conversation."
 
             async with channel.typing():
@@ -361,7 +348,6 @@ class AICog(commands.Cog, name="AI"):
                 if conversation_starter:
                     if target_user:
                         await channel.send(f"{target_user.mention}, {conversation_starter}")
-                        # --- MODIFICATION: Update the state tracking ---
                         self.last_autonomously_tagged_user[channel.id] = target_user.id
                         logger.info(f"Posted autonomous message in #{channel.name} targeting {target_user.name}.")
                     else:
@@ -402,7 +388,11 @@ class AICog(commands.Cog, name="AI"):
         mood = self._get_mood_description()
         boredom = self.boredom
         sentiment_score = get_user_sentiment(target_user.id)
-        sentiment_desc = self._get_sentiment_description(sentiment_score)
+        
+        # We can create a simple description here for the status check
+        if sentiment_score > 2: sentiment_desc = "Positive"
+        elif sentiment_score < -2: sentiment_desc = "Negative"
+        else: sentiment_desc = "Neutral"
 
         embed = discord.Embed(
             title="🧠 My Internal State",

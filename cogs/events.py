@@ -22,14 +22,6 @@ try:
 except ImportError:
     gtts_available = False
 
-# --- Hugging Face Transformers Setup ---
-try:
-    from transformers import pipeline
-
-    transformers_available = True
-except ImportError:
-    transformers_available = False
-
 logger = logging.getLogger('demented_bot.events')
 
 
@@ -87,33 +79,12 @@ class EventsCog(commands.Cog, name="Events"):
         if not gtts_available:
             logger.warning("`gTTS` not found. AI voice features will be disabled. Install with: pip install gTTS")
 
-        self.sentiment_pipeline = None
-        if transformers_available:
-            logger.info("Loading sentiment analysis pipeline from Hugging Face...")
-            self.sentiment_pipeline = pipeline("sentiment-analysis",
-                                               model="distilbert-base-uncased-finetuned-sst-2-english")
-            logger.info("Sentiment analysis pipeline loaded successfully.")
-        else:
-            logger.warning("`transformers` or `torch` not found. Sentiment analysis is disabled. "
-                           "Install with: pip install transformers torch")
-
     @property
     def bot_name_trigger(self) -> str:
         if self._bot_name_trigger is None and self.bot.user:
             self._bot_name_trigger = self.bot.user.name.split()[0].lower()
             logger.info(f"Bot name trigger word set to: '{self._bot_name_trigger}'")
         return self._bot_name_trigger or ""
-
-    def get_sentiment(self, text: str) -> float:
-        if not self.sentiment_pipeline:
-            return 0.0
-        try:
-            result = self.sentiment_pipeline(text[:512])[0]
-            score = result['score']
-            return score if result['label'] == 'POSITIVE' else -score
-        except Exception as e:
-            logger.error(f"Error during sentiment analysis: {e}")
-        return 0.0
 
     async def _play_and_cleanup(self, voice_client: discord.VoiceClient, source_path: Path, is_tts: bool):
         """Plays an audio file and handles cleanup afterwards."""
@@ -226,8 +197,6 @@ class EventsCog(commands.Cog, name="Events"):
             return
             # --- END MODIFICATION ---
 
-        sentiment_score = self.get_sentiment(message.clean_content)
-
         # --- Centralized conversational logic with proactive learning ---
         if is_direct_mention or is_name_mention or is_reply_to_bot:
             # Get all mentioned members, excluding bots.
@@ -244,8 +213,7 @@ class EventsCog(commands.Cog, name="Events"):
                 # Pass the message and the list of mentioned users to the AI for the main response
                 response_data = await ai_cog.get_conversational_response(
                     message,
-                    mentioned_users=mentioned_members,
-                    sentiment_change=sentiment_score
+                    mentioned_users=mentioned_members
                 )
 
                 if response_data and response_data.get("response_text"):
